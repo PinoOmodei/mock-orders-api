@@ -10,6 +10,41 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// 🧾 Logger (middleware. Notare l'uso di res.on(), per eseguire del codice DOPO l'esecuzione dell'endpoint. Cool!)
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    console.log(
+      `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} → ${res.statusCode} (${duration}ms)`
+    );
+  });
+  next();
+});
+
+// Implementazione security con token fisso (e endpoint health per check)
+// ✅ Endpoint pubblico di health check
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    service: "Mock Orders API",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// 🔐 Middleware di sicurezza: richiede x-api-key in header per tutto il resto
+app.use((req, res, next) => {
+  if (req.path === "/health") return next(); // escluso
+  const token = req.headers["x-api-key"];
+  if (!token || token !== process.env.API_KEY) {
+    return res
+      .status(401)
+      .json({ error: "Unauthorized: invalid or missing API key" });
+  }
+  next();
+});
+
+
 const DB_PATH = "./db.json";
 
 // Funzione helper per caricare il database
@@ -21,11 +56,6 @@ async function loadDB() {
     throw new Error("Database non accessibile");
   }
 }
-
-// Endpoint base
-app.get("/", (req, res) => {
-  res.json({ message: "Mock Orders API - ready" });
-});
 
 // ✅ Endpoint: /orders/search?email=
 app.get("/orders/search", async (req, res) => {

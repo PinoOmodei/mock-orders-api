@@ -3,13 +3,41 @@ info:
   title: Mock Orders API
   description: API mock per recuperare lo stato degli ordini clienti
   version: 1.0.0
+
 servers:
   - url: https://your-domain-or-localtunnel/api
+
 paths:
+  /health:
+    get:
+      operationId: getHealthStatus
+      summary: Controlla lo stato del servizio
+      description: Restituisce un messaggio di conferma che l'API è attiva.
+      security: []   # Nessuna autenticazione richiesta
+      responses:
+        "200":
+          description: Servizio attivo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  service:
+                    type: string
+                    example: Mock Orders API
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: 2025-10-15T15:12:33.456Z
+
   /orders/{id}:
     get:
       operationId: getOrderById
       summary: Recupera i dettagli di un ordine tramite ID
+      description: Restituisce i dettagli completi di un ordine identificato dal suo ID univoco.
       parameters:
         - name: id
           in: path
@@ -26,6 +54,15 @@ paths:
                 $ref: "#/components/schemas/Order"
         "404":
           description: Ordine non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Ordine non trovato
+
   /orders/search:
     get:
       operationId: searchOrdersByEmail
@@ -60,6 +97,7 @@ paths:
                 properties:
                   error:
                     type: string
+                    example: Missing required query parameter: email
         "404":
           description: Nessun ordine trovato per l'email fornita
           content:
@@ -69,24 +107,41 @@ paths:
                 properties:
                   message:
                     type: string
+                    example: No orders found for email mario.rossi@example.com
+
+# 🔐 Sicurezza globale (applicata a tutti gli endpoint tranne /health)
+security:
+  - ApiKeyAuth: []
 
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
   schemas:
     Order:
       type: object
       properties:
         id:
           type: string
+          example: A1001
         customer:
           type: string
+          example: Mario Rossi
         customerEmail:
           type: string
+          example: mario.rossi@example.com
         status:
           type: string
+          example: spedito
         date:
           type: string
+          example: 2025-10-14
         total:
           type: number
+          example: 89.9
         items:
           type: array
           items:
@@ -94,7 +149,10 @@ components:
             properties:
               name:
                 type: string
+                example: Scarpe sportive
               qty:
                 type: integer
+                example: 1
               price:
                 type: number
+                example: 59.9
