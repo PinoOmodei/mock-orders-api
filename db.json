@@ -3,6 +3,7 @@
     {
       "id": "A1001",
       "customer": "Mario Rossi",
+      "customerEmail": "mario.rossi@example.com",
       "status": "spedito",
       "date": "2025-10-14",
       "total": 89.90,
@@ -14,6 +15,7 @@
     {
       "id": "A1002",
       "customer": "Lucia Bianchi",
+      "customerEmail": "lucia.bianchi@example.com",
       "status": "in lavorazione",
       "date": "2025-10-13",
       "total": 49.50,
