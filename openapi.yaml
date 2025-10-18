@@ -3,9 +3,12 @@ info:
   title: Mock Orders API
   description: API mock per recuperare lo stato degli ordini clienti
   version: 1.0.0
+  license:
+    name: Emmelibri - Internal use only
+    url: www.emmelibri.it
 
 servers:
-  - url: https://your-domain-or-localtunnel/api
+  - url: https://noneconomically-noncognitive-luisa.ngrok-free.dev
 
 paths:
   /health:
@@ -32,6 +35,8 @@ paths:
                     type: string
                     format: date-time
                     example: 2025-10-15T15:12:33.456Z
+        "400":
+          description: Richiesta non valida
 
   /orders/{id}:
     get:
@@ -97,7 +102,7 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Missing required query parameter: email
+                    example: Missing required query parameter email
         "404":
           description: Nessun ordine trovato per l'email fornita
           content:

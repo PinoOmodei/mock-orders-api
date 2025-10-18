@@ -15,6 +15,7 @@
     "fs-extra": "^11.2.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "openapi-typescript-validator": "^4.0.0"
   }
 }
